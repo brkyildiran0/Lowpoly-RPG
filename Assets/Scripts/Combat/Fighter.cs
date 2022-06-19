@@ -10,7 +10,13 @@ namespace RPG.Combat
     {
         [SerializeField] float weaponRange = 2f;
 
-        Transform target; 
+        Transform target;
+        Mover moverComponent;
+
+        private void Awake()
+        {
+            moverComponent = GetComponent<Mover>();
+        }
 
         private void Update()
         {
@@ -18,13 +24,19 @@ namespace RPG.Combat
             {
                 if (isInWeaponRange(target))
                 {
-                    GetComponent<Mover>().Cancel();
+                    moverComponent.Cancel();
+                    AttackBehaviour();
                 }
                 else
                 {
-                    GetComponent<Mover>().MoveTo(target.position);
+                    moverComponent.MoveTo(target.position);
                 }
             }
+        }
+
+        private void AttackBehaviour()
+        {
+            GetComponent<Animator>().SetTrigger("attack");
         }
 
         private bool isInWeaponRange(Transform combatTarget)
@@ -46,6 +58,12 @@ namespace RPG.Combat
         public void Cancel()
         {
             target = null;
+        }
+
+        //Animation Event
+        private void Hit()
+        {
+
         }
     }
 }
