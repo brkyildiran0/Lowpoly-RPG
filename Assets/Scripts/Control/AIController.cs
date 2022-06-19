@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using RPG.Movement;
 using RPG.Combat;
 using RPG.Core;
 
@@ -45,6 +44,13 @@ namespace RPG.Control
         {
             float distanceToPlayer = Vector3.Distance(playerObject.transform.position, transform.position);
             return chaseDistance >= distanceToPlayer;
+        }
+
+        //Called by Unity internally
+        private void OnDrawGizmosSelected()
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, chaseDistance);
         }
     }
 }
