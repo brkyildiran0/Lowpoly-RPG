@@ -20,7 +20,7 @@ namespace RPG.Combat
 
         private void Awake()
         {
-            timeSinceLastAttack = 0f;
+            timeSinceLastAttack = Mathf.Infinity;
             moverComponent = GetComponent<Mover>();
             animator = GetComponent<Animator>();
         }

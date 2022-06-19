@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using RPG.Movement;
 using RPG.Combat;
+using RPG.Core;
 
 namespace RPG.Control
 {
@@ -12,10 +13,12 @@ namespace RPG.Control
 
         GameObject playerObject;
         Fighter AIFighter;
+        Health health;
 
         private void Awake()
         {
             AIFighter = GetComponent<Fighter>();
+            health = GetComponent<Health>();
         }
 
         private void Start()
@@ -26,6 +29,8 @@ namespace RPG.Control
 
         private void Update()
         {
+            if (health.IsDead()) return;
+
             if (InAttackRange() && AIFighter.CanAttack(playerObject))
             {
                 AIFighter.Attack(playerObject);

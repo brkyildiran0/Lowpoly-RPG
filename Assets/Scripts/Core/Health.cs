@@ -2,13 +2,14 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace RPG.Combat
+namespace RPG.Core
 {
     public class Health : MonoBehaviour
     {
         [SerializeField] float healthPoints = 20f;
 
         Animator animator;
+        ActionScheduler actionScheduler;
         bool isDead;
 
         public bool IsDead()
@@ -19,6 +20,7 @@ namespace RPG.Combat
         private void Awake()
         {
             animator = GetComponent<Animator>();
+            actionScheduler = GetComponent<ActionScheduler>();
             isDead = false;
         }
 
@@ -28,10 +30,17 @@ namespace RPG.Combat
 
             if (healthPoints == 0f)
             {
-                if (isDead) return;
-                isDead = true;
-                animator.SetTrigger("die");
+                Die();
             }
+        }
+
+        private void Die()
+        {
+            if (isDead) return;
+
+            isDead = true;
+            animator.SetTrigger("die");
+            actionScheduler.CancelCurrentAction();
         }
     }
 }

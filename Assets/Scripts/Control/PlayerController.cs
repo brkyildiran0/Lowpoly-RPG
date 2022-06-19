@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using RPG.Movement;
 using RPG.Combat;
+using RPG.Core;
 
 namespace RPG.Control
 {
@@ -11,15 +12,18 @@ namespace RPG.Control
     {
         Fighter fighter;
         Mover mover;
+        Health health;
 
         private void Awake()
         {
             fighter = GetComponent<Fighter>();
             mover = GetComponent<Mover>();
+            health = GetComponent<Health>();
         }
 
         void Update()
         {
+            if (health.IsDead()) return;
             if (InteractWithCombat()) return;
             if (InteractWithMovement()) return;
         }
