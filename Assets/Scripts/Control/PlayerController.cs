@@ -9,6 +9,15 @@ namespace RPG.Control
 {
     public class PlayerController : MonoBehaviour
     {
+        Fighter fighter;
+        Mover mover;
+
+        private void Awake()
+        {
+            fighter = GetComponent<Fighter>();
+            mover = GetComponent<Mover>();
+        }
+
         void Update()
         {
             if (InteractWithCombat()) return;
@@ -26,7 +35,7 @@ namespace RPG.Control
 
                 if (Input.GetMouseButtonDown(0))
                 {
-                    GetComponent<Fighter>().Attack(target);
+                    fighter.Attack(target);
                 }
                 return true;
             }
@@ -41,7 +50,8 @@ namespace RPG.Control
             {
                 if (Input.GetMouseButton(0))
                 {
-                    GetComponent<Mover>().MoveTo(hit.point);
+                    fighter.Cancel();
+                    mover.MoveTo(hit.point);
                 }
                 return true;
             }
