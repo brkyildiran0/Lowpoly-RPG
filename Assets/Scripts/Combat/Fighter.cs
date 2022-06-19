@@ -12,32 +12,34 @@ namespace RPG.Combat
         [SerializeField] float weaponDamage = 5f;
         [SerializeField] float timeBetweenAttacks = 1f;
 
-        Transform target;
+        Health target;
 
         float timeSinceLastAttack;
         Mover moverComponent;
+        Animator animator;
 
         private void Awake()
         {
             timeSinceLastAttack = 0f;
             moverComponent = GetComponent<Mover>();
+            animator = GetComponent<Animator>();
         }
 
         private void Update()
         {
             timeSinceLastAttack += Time.deltaTime;
 
-            if (target != null)
+            if (target == null) return;
+            if (target.IsDead()) return;
+
+            if (isInWeaponRange(target.transform))
             {
-                if (isInWeaponRange(target))
-                {
-                    moverComponent.Cancel();
-                    AttackBehaviour();
-                }
-                else
-                {
-                    moverComponent.MoveTo(target.position);
-                }
+                moverComponent.Cancel();
+                AttackBehaviour();
+            }
+            else
+            {
+                moverComponent.MoveTo(target.transform.position);
             }
         }
 
@@ -45,7 +47,7 @@ namespace RPG.Combat
         {
             if (timeSinceLastAttack > timeBetweenAttacks)
             {
-                GetComponent<Animator>().SetTrigger("attack");  //Will call Hit() method by itself.
+                animator.SetTrigger("attack");  //Will call Hit() method by itself.
                 timeSinceLastAttack = 0f;
             }
         }
@@ -53,11 +55,7 @@ namespace RPG.Combat
         //Animation Event
         private void Hit()
         {
-            Health targetHealth = target.GetComponent<Health>();
-            if (targetHealth != null)
-            {
-                targetHealth.TakeDamage(weaponDamage);
-            }
+            target.TakeDamage(weaponDamage);
         }
 
         private bool isInWeaponRange(Transform combatTarget)
@@ -73,11 +71,12 @@ namespace RPG.Combat
         public void Attack(CombatTarget combatTarget)
         {
             GetComponent<ActionScheduler>().StartAction(this);
-            target = combatTarget.transform;
+            target = combatTarget.GetComponent<Health>();
         }
 
         public void Cancel()
         {
+            animator.SetTrigger("stopAttack");
             target = null;
         }
     }
