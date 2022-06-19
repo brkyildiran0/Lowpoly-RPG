@@ -2,17 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class ActionScheduler : MonoBehaviour
+namespace RPG.Core
 {
-    MonoBehaviour currentAction;
-
-    public void StartAction(MonoBehaviour action)
+    public class ActionScheduler : MonoBehaviour
     {
-        if (currentAction == action) return;
-        if (currentAction != null)
+        IAction currentAction;
+
+        public void StartAction(IAction action)
         {
-            print("Canceling" + currentAction);
+            if (currentAction == action) return;
+            if (currentAction != null)
+            {
+                currentAction.Cancel();
+            }
+            currentAction = action;
         }
-        currentAction = action;
     }
 }
+

@@ -1,11 +1,12 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using RPG.Core;
 using RPG.Movement;
 
 namespace RPG.Combat
 {
-    public class Fighter : MonoBehaviour
+    public class Fighter : MonoBehaviour, IAction
     {
         [SerializeField] float weaponRange = 2f;
 
@@ -17,7 +18,7 @@ namespace RPG.Combat
             {
                 if (isInWeaponRange(target))
                 {
-                    GetComponent<Mover>().Stop();
+                    GetComponent<Mover>().Cancel();
                 }
                 else
                 {
