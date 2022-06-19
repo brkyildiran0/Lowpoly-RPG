@@ -60,7 +60,7 @@ namespace RPG.Combat
             target.TakeDamage(weaponDamage);
         }
 
-        public bool CanAttack(CombatTarget combatTarget)
+        public bool CanAttack(GameObject combatTarget)
         {
             if (combatTarget == null) { return false; }
             Health targetToTest = combatTarget.GetComponent<Health>();
@@ -76,10 +76,10 @@ namespace RPG.Combat
             return false;
         }
 
-        public void Attack(CombatTarget combatTarget)
+        public void Attack(GameObject attackTarget)
         {
             GetComponent<ActionScheduler>().StartAction(this);
-            target = combatTarget.GetComponent<Health>();
+            target = attackTarget.GetComponent<Health>();
         }
 
         public void Cancel()
