@@ -79,9 +79,9 @@ namespace RPG.Control
 
         private void PatrolState()
         {
+            mover.SetSpeed(3.5f);
             Vector3 nextPosition = guardingPosition;
 
-            //Patroling behavior
             if (patrolPath != null)
             {
                 if (AtWaypoint())
@@ -98,6 +98,13 @@ namespace RPG.Control
             }
         }
 
+        private void AttackState()
+        {
+            mover.SetSpeed(4.5f);
+            timeSinceLastSeenPlayer = 0;
+            AIFighter.Attack(playerObject);
+        }
+
         private Vector3 GetCurrentWaypoint()
         {
             return patrolPath.GetWaypoint(currentWaypointIndex);
@@ -112,12 +119,6 @@ namespace RPG.Control
         {
             float distanceToWaypoint = Vector3.Distance(transform.position, GetCurrentWaypoint());
             return distanceToWaypoint < waypointTolerance;
-        }
-
-        private void AttackState()
-        {
-            timeSinceLastSeenPlayer = 0;
-            AIFighter.Attack(playerObject);
         }
 
         public bool InAttackRange()

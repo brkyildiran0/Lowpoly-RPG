@@ -49,5 +49,10 @@ namespace RPG.Movement
         {
             navMeshAgent.isStopped = true;
         }
+
+        public void SetSpeed(float speed)
+        {
+            navMeshAgent.speed = speed;
+        }
     }
 }
