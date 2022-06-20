@@ -1,34 +1,22 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace RPG.Core
 {
     public class Health : MonoBehaviour
     {
-        [SerializeField] float healthPoints = 20f;
+        [SerializeField] float healthPoints = 100f;
 
-        Animator animator;
-        ActionScheduler actionScheduler;
-        bool isDead;
+        bool isDead = false;
 
         public bool IsDead()
         {
             return isDead;
         }
 
-        private void Awake()
-        {
-            animator = GetComponent<Animator>();
-            actionScheduler = GetComponent<ActionScheduler>();
-            isDead = false;
-        }
-
         public void TakeDamage(float damage)
         {
-            healthPoints = Mathf.Max(healthPoints - damage, 0f);
-
-            if (healthPoints == 0f)
+            healthPoints = Mathf.Max(healthPoints - damage, 0);
+            if(healthPoints == 0)
             {
                 Die();
             }
@@ -39,8 +27,8 @@ namespace RPG.Core
             if (isDead) return;
 
             isDead = true;
-            animator.SetTrigger("die");
-            actionScheduler.CancelCurrentAction();
+            GetComponent<Animator>().SetTrigger("die");
+            GetComponent<ActionScheduler>().CancelCurrentAction();
         }
     }
 }
