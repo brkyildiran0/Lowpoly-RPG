@@ -4,6 +4,7 @@ using UnityEngine;
 using RPG.Combat;
 using RPG.Core;
 using RPG.Movement;
+using System;
 
 namespace RPG.Control
 {
@@ -11,6 +12,9 @@ namespace RPG.Control
     {
         [SerializeField] float chaseDistance = 5f;
         [SerializeField] float suspiciousTime = 3f;
+        [SerializeField] PatrolPath patrolPath;
+        [SerializeField] float waypointTolerance = 1f;
+        [SerializeField] float dwellTime = 5f;
 
         GameObject playerObject;
         ActionScheduler actionScheduler;
@@ -20,6 +24,8 @@ namespace RPG.Control
 
         Vector3 guardingPosition;
         float timeSinceLastSeenPlayer;
+        float timeSinceLastDwell;
+        int currentWaypointIndex;
 
 
         private void Awake()
@@ -28,7 +34,9 @@ namespace RPG.Control
             health = GetComponent<Health>();
             mover = GetComponent<Mover>();
             guardingPosition = transform.position;
-            timeSinceLastSeenPlayer = Mathf.Infinity; ;
+            timeSinceLastSeenPlayer = Mathf.Infinity;
+            currentWaypointIndex = 0;
+            timeSinceLastDwell = Mathf.Infinity;
         }
 
         private void Start()
@@ -44,7 +52,6 @@ namespace RPG.Control
 
             if (InAttackRange() && AIFighter.CanAttack(playerObject))
             {
-                timeSinceLastSeenPlayer = 0;
                 AttackState();
             }
             else if (!InAttackRange() && timeSinceLastSeenPlayer < suspiciousTime)
@@ -53,9 +60,15 @@ namespace RPG.Control
             }
             else
             {
-                GuardState();
+                PatrolState();
             }
 
+            UpdateTimers();
+        }
+
+        private void UpdateTimers()
+        {
+            timeSinceLastDwell += Time.deltaTime;
             timeSinceLastSeenPlayer += Time.deltaTime;
         }
 
@@ -64,13 +77,46 @@ namespace RPG.Control
             actionScheduler.CancelCurrentAction();
         }
 
-        private void GuardState()
+        private void PatrolState()
         {
-            mover.StartMoveAction(guardingPosition);
+            Vector3 nextPosition = guardingPosition;
+
+            //Patroling behavior
+            if (patrolPath != null)
+            {
+                if (AtWaypoint())
+                {
+                    CycleWaypoint();
+                }
+                nextPosition = GetCurrentWaypoint();
+            }
+
+            if (timeSinceLastDwell > dwellTime)
+            {
+                mover.StartMoveAction(nextPosition);
+                timeSinceLastDwell = 0;
+            }
+        }
+
+        private Vector3 GetCurrentWaypoint()
+        {
+            return patrolPath.GetWaypoint(currentWaypointIndex);
+        }
+
+        private void CycleWaypoint()
+        {
+            currentWaypointIndex = patrolPath.GetNextIndex(currentWaypointIndex);
+        }
+
+        private bool AtWaypoint()
+        {
+            float distanceToWaypoint = Vector3.Distance(transform.position, GetCurrentWaypoint());
+            return distanceToWaypoint < waypointTolerance;
         }
 
         private void AttackState()
         {
+            timeSinceLastSeenPlayer = 0;
             AIFighter.Attack(playerObject);
         }
 
