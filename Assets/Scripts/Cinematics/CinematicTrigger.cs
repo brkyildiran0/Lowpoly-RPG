@@ -23,7 +23,7 @@ namespace RPG.Cinematics
                 director.Play();
                 alreadyTriggered = true;
             }
-        }
+        } 
     }
 }
 
